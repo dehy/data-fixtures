@@ -160,7 +160,10 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                 $connection->executeUpdate($this->getDeleteFromTableSQL($tbl, $platform));
             } else {
+                $previousAutocommit = $connection->isAutocommit();
+                $connection->setAutocommit(false);
                 $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+                $connection->setAutocommit($previousAutocommit);
             }
         }
     }
